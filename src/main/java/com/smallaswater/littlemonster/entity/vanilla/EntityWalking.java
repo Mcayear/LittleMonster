@@ -13,12 +13,13 @@ import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Utils;
+import com.smallaswater.littlemonster.config.MonsterConfig;
 import org.apache.commons.math3.util.FastMath;
 
-public abstract class EntityWalking extends BaseEntity {
+public abstract class EntityWalking extends VanillaEntity {
 
-    public EntityWalking(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
+    public EntityWalking(FullChunk chunk, CompoundTag nbt, MonsterConfig config) {
+        super(chunk, nbt, config);
     }
 
     protected void checkTarget() {

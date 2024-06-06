@@ -7,6 +7,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Utils;
+import com.smallaswater.littlemonster.config.MonsterConfig;
 import com.smallaswater.littlemonster.entity.vanilla.EntityJumping;
 
 import java.util.Objects;
@@ -20,8 +21,8 @@ public abstract class EntityJumpingMob extends EntityJumping implements EntityMo
 
     protected boolean canAttack = true;
 
-    public EntityJumpingMob(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
+    public EntityJumpingMob(FullChunk chunk, CompoundTag nbt, MonsterConfig config) {
+        super(chunk, nbt, config);
     }
 
     @Override

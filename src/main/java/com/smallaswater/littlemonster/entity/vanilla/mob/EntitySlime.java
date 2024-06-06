@@ -24,7 +24,7 @@ public class EntitySlime extends EntityJumpingMob {
     protected int size = SIZE_BIG;
 
     public EntitySlime(FullChunk chunk, CompoundTag nbt, MonsterConfig config) {
-        super(chunk, nbt);
+        super(chunk, nbt, config);
     }
 
     @Override

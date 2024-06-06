@@ -41,7 +41,7 @@ import static com.smallaswater.littlemonster.entity.baselib.BaseEntity.*;
 import static com.smallaswater.littlemonster.entity.bnvanilla.ai.MeleeAttackExecutor.playArmSwingAnimation;
 
 public class VanillaOperateNPC extends MovingVanillaEntity {
-    public VanillaNPC vanillaNPC;
+    public IEntity vanillaNPC;
 
     @Setter
     @Getter
