@@ -1,4 +1,4 @@
-package com.smallaswater.littlemonster.entity.vanilla.ai;
+package com.smallaswater.littlemonster.entity.bnvanilla.ai;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;

@@ -1,4 +1,4 @@
-package com.smallaswater.littlemonster.entity.vanilla.ai.route;
+package com.smallaswater.littlemonster.entity.bnvanilla.ai.route;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;

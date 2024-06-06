@@ -1,25 +1,27 @@
-package com.smallaswater.littlemonster.entity.vanilla.ai.entity;
+package com.smallaswater.littlemonster.entity.bnvanilla.ai.entity;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.BubbleParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import com.smallaswater.littlemonster.entity.vanilla.ai.route.AdvancedRouteFinder;
-import com.smallaswater.littlemonster.entity.vanilla.ai.route.Node;
-import com.smallaswater.littlemonster.entity.vanilla.ai.route.RouteFinder;
+import com.smallaswater.littlemonster.entity.bnvanilla.ai.route.AdvancedRouteFinder;
+import com.smallaswater.littlemonster.entity.bnvanilla.ai.route.Node;
+import com.smallaswater.littlemonster.entity.bnvanilla.ai.route.RouteFinder;
+import com.smallaswater.littlemonster.utils.Utils;
 
-abstract public class MovingEntity extends EntityHuman {
-    private boolean isKnockback = false;
+abstract public class MovingVanillaEntity extends EntityCreature {
+    protected boolean isKnockback = false;
     public RouteFinder route = null;
     private Vector3 target = null;
     public boolean autoSeeFont = true;
     private int jammingTick = 0;
     private long passedTick = 1;
 
-    public MovingEntity(FullChunk chunk, CompoundTag nbt) {
+    public MovingVanillaEntity(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         this.route = new AdvancedRouteFinder(this);
     }
@@ -29,6 +31,7 @@ abstract public class MovingEntity extends EntityHuman {
             this.motionY += 0.35;
         }
     }
+
 
     @Override
     public boolean entityBaseTick(int tickDiff) {
@@ -71,6 +74,9 @@ abstract public class MovingEntity extends EntityHuman {
                     jammingTick = 0;
                     if (this.route.next() == null) {
                         this.route.arrived();
+                        this.motionX += 0.5;
+                        this.motionZ += 0.5;
+                        this.updateMovement();
                     }
                 } else {
                     jammingTick++;
@@ -94,7 +100,12 @@ abstract public class MovingEntity extends EntityHuman {
 
         this.checkGround();
         if (!this.onGround) {
-            this.motionY -= this.getGravity();
+            if (this.isInsideOfWater()) {
+                this.motionY += movementSpeed * 0.05D * ((this.target.y - this.y) / tickDiff);
+                this.level.addParticle(new BubbleParticle(this.add(Utils.rand(-2.0D, 2.0D), Utils.rand(-0.5D, 0.0D), Utils.rand(-2.0D, 2.0D))));
+            } else {
+                this.motionY -= this.getGravity();
+            }
             hasUpdate = true;
         }
 
@@ -113,13 +124,13 @@ abstract public class MovingEntity extends EntityHuman {
 
         AxisAlignedBB bb = this.getBoundingBox();
         final double x = this.getX(), y = this.getY(), z = this.getZ();
-        final float dx = this.getWidth() / 2, dy = this.getLength() , dz = this.getHeight() / 2;
+        final float dx = this.getWidth() / 2, dz = this.getLength() / 2, dy = this.getHeight();
         bb.setMaxX(x + dx);
         bb.setMinX(x - dx);
-        bb.setMaxY(y + dy);
-        bb.setMinY(y);
         bb.setMaxZ(z + dz);
         bb.setMinZ(z - dz);
+        bb.setMaxY(y + dy);
+        bb.setMinY(y);
 
         return hasUpdate;
     }

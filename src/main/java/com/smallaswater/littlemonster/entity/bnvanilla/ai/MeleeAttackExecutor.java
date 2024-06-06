@@ -1,8 +1,7 @@
-package com.smallaswater.littlemonster.entity.vanilla.ai;
+package com.smallaswater.littlemonster.entity.bnvanilla.ai;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.network.protocol.EntityEventPacket;
 
 public class MeleeAttackExecutor {

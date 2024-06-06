@@ -1,6 +1,6 @@
-package com.smallaswater.littlemonster.entity.vanilla.ai.route;
+package com.smallaswater.littlemonster.entity.bnvanilla.ai.route;
 
-import com.smallaswater.littlemonster.entity.vanilla.ai.entity.MovingEntity;
+import com.smallaswater.littlemonster.entity.bnvanilla.ai.entity.MovingEntity;
 
 public class SimpleRouteFinder extends RouteFinder{
 	public SimpleRouteFinder(MovingEntity entity){

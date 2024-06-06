@@ -1,4 +1,4 @@
-package com.smallaswater.littlemonster.entity.vanilla;
+package com.smallaswater.littlemonster.entity.bnvanilla;
 
 import cn.nukkit.block.*;
 import cn.nukkit.level.Position;

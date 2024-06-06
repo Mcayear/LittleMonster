@@ -1,4 +1,4 @@
-package com.smallaswater.littlemonster.entity.vanilla;
+package com.smallaswater.littlemonster.entity.bnvanilla;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -22,8 +22,8 @@ import com.smallaswater.littlemonster.entity.EntityCommandSender;
 import com.smallaswater.littlemonster.entity.IEntity;
 import com.smallaswater.littlemonster.entity.LittleNpc;
 import com.smallaswater.littlemonster.entity.baselib.BaseEntity;
-import com.smallaswater.littlemonster.entity.vanilla.ai.ShootAttackExecutor;
-import com.smallaswater.littlemonster.entity.vanilla.ai.entity.MovingVanillaEntity;
+import com.smallaswater.littlemonster.entity.bnvanilla.ai.ShootAttackExecutor;
+import com.smallaswater.littlemonster.entity.bnvanilla.ai.entity.MovingVanillaEntity;
 import com.smallaswater.littlemonster.handle.DamageHandle;
 import com.smallaswater.littlemonster.manager.BossBarManager;
 import com.smallaswater.littlemonster.utils.Utils;
@@ -32,14 +32,13 @@ import lombok.Setter;
 import nukkitcoders.mobplugin.entities.animal.WalkingAnimal;
 import nukkitcoders.mobplugin.entities.monster.Monster;
 import org.jetbrains.annotations.NotNull;
-import xyz.lightsky.squarepet.pet.BaseSquarePet;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.smallaswater.littlemonster.LittleMonsterMainClass.hasMobPlugin;
 import static com.smallaswater.littlemonster.entity.baselib.BaseEntity.*;
-import static com.smallaswater.littlemonster.entity.vanilla.ai.MeleeAttackExecutor.playArmSwingAnimation;
+import static com.smallaswater.littlemonster.entity.bnvanilla.ai.MeleeAttackExecutor.playArmSwingAnimation;
 
 public class VanillaOperateNPC extends MovingVanillaEntity {
     public VanillaNPC vanillaNPC;

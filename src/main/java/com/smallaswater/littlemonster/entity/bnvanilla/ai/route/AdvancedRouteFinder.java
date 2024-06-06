@@ -1,13 +1,10 @@
-package com.smallaswater.littlemonster.entity.vanilla.ai.route;
+package com.smallaswater.littlemonster.entity.bnvanilla.ai.route;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
-import cn.nukkit.block.BlockFence;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
-import com.smallaswater.littlemonster.entity.vanilla.ai.entity.Climbable;
-import com.smallaswater.littlemonster.entity.vanilla.ai.entity.Fallable;
+import com.smallaswater.littlemonster.entity.bnvanilla.ai.entity.Climbable;
+import com.smallaswater.littlemonster.entity.bnvanilla.ai.entity.Fallable;
 
 import java.util.ArrayList;
 import java.util.Collections;
