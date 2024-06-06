@@ -3,7 +3,6 @@ package com.smallaswater.littlemonster.entity.vanilla.mob;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDeathEvent;
@@ -14,100 +13,17 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
 import cn.nukkit.utils.Utils;
 import com.smallaswater.littlemonster.config.MonsterConfig;
-import com.smallaswater.littlemonster.entity.IEntity;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class EntityZombiePigman extends EntityWalkingMob implements IEntity {
-
-    public final int NETWORK_ID;
+public class EntityZombiePigman extends EntityWalkingMob {
 
     private int angry = 0;
 
-    public IEntity vanillaNPC;
-
-    @Setter
-    @Getter
-    protected MonsterConfig config;
-
-    @Setter
-    @Getter
-    private int liveTime = -1;
-
-    /**
-     * 准则 不会伤害主人
-     */
-    @Setter
-    @Getter
-    protected EntityHuman masterHuman = null;
-
-
-    /**
-     * 如果主人死了 本体是否死亡。
-     * 用于由技能生成的怪物
-     */
-    @Setter
-    public boolean deathFollowMaster = false;
-
-    public String spawnPos = null;
-
-    /**
-     * 防具
-     */
-    @Setter
-    private Item[] armor;
-
-    /**
-     * 手持装备
-     */
-    @Setter
-    private Item tool;
-
-    /**
-     * 移速
-     */
-    public double speed = 3;
-
-    public float halfWidth = 0.3f;
-    public float width = 0.6f;
-    public float length = 0.6f;
-    public float height = 1.8f;
-    public float eyeHeight = 1.62f;
-
     public EntityZombiePigman(FullChunk chunk, CompoundTag nbt, MonsterConfig config) {
         super(chunk, nbt, config);
-        this.NETWORK_ID = config.getNetworkId();
-
-        Entity temp = Entity.createEntity(String.valueOf(config.getNetworkId()), chunk, nbt);
-        if (temp != null) {
-            width = temp.getWidth();
-            length = temp.getLength();
-            height = temp.getHeight();
-            // length 可能为0，详见 `AxisAlignedBB bb` 计算
-            if (length == 0) {
-                length = width;
-            }
-            eyeHeight = temp.getEyeHeight();
-            halfWidth = this.getWidth() / 2;
-            temp.close();
-        }
-        this.dataProperties.putFloat(DATA_BOUNDING_BOX_HEIGHT, getHeight());
-        this.dataProperties.putFloat(DATA_BOUNDING_BOX_WIDTH, getWidth());
-
-        this.setMaxHealth(config.getHealth());
-        this.setHealth(config.getHealth());
-        this.setNameTagVisible(true);
-        this.setNameTagAlwaysVisible(true);
-        vanillaNPC = this;
-    }
-
-    @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
     }
 
     @Override
@@ -241,30 +157,5 @@ public class EntityZombiePigman extends EntityWalkingMob implements IEntity {
         }
 
         return super.entityBaseTick(tickDiff);
-    }
-
-    @Override
-    public Entity getEntity() {
-        return this;
-    }
-
-    @Override
-    public void setSpawnPos(String name) {
-        spawnPos = name;
-    }
-
-    @Override
-    public String getSpawnPos() {
-        return spawnPos;
-    }
-
-    @Override
-    public boolean isVanillaEntity() {
-        return true;
-    }
-
-    @Override
-    public void onDeath(EntityDeathEvent event) {
-
     }
 }
