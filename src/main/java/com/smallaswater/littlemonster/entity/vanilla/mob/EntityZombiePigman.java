@@ -62,14 +62,6 @@ public class EntityZombiePigman extends EntityWalkingMob {
     }
 
     @Override
-    public boolean targetOption(EntityCreature creature, double distance) {
-        if (distance <= 100 && this.isAngry() && creature instanceof EntityZombiePigman && !((EntityZombiePigman) creature).isAngry()) {
-            ((EntityZombiePigman) creature).setAngry(2400);
-        }
-        return this.isAngry() && super.targetOption(creature, distance);
-    }
-
-    @Override
     public void attackEntity(Entity player) {
         if (this.attackDelay > 23 && this.distanceSquared(player) < 1.44) {
             this.attackDelay = 0;

@@ -15,7 +15,9 @@ import com.smallaswater.littlemonster.entity.IEntity;
 import com.smallaswater.littlemonster.entity.LittleNpc;
 import com.smallaswater.littlemonster.entity.LittleNpcCustomEntity;
 import com.smallaswater.littlemonster.entity.bnvanilla.VanillaNPC;
-import com.smallaswater.littlemonster.entity.bnvanilla.mob.EntitySlime;
+import com.smallaswater.littlemonster.entity.vanilla.VanillaEntity;
+import com.smallaswater.littlemonster.entity.vanilla.mob.EntitySlime;
+import com.smallaswater.littlemonster.entity.vanilla.mob.EntityZombiePigman;
 import com.smallaswater.littlemonster.items.DeathCommand;
 import com.smallaswater.littlemonster.items.DropItem;
 import com.smallaswater.littlemonster.skill.BaseSkillManager;
@@ -295,9 +297,9 @@ public class MonsterConfig {
             if (this.networkId == 37) {
                 littleNpc = new EntitySlime(spawn.getChunk(), Entity.getDefaultNBT(spawn), this);
             } else {
-                littleNpc = new VanillaNPC(spawn.getChunk(), Entity.getDefaultNBT(spawn), this, false);
+                littleNpc = new EntityZombiePigman(spawn.getChunk(), Entity.getDefaultNBT(spawn), this);
             }
-            this.vanillaSetting((VanillaNPC) littleNpc);
+            this.vanillaSetting((VanillaEntity) littleNpc);
         } else {
             littleNpc = new LittleNpc(spawn.getChunk(), nbt, this);
             this.npcSetting((LittleNpc) littleNpc);
@@ -317,17 +319,17 @@ public class MonsterConfig {
         return this.spawn(spawn, -1);
     }
 
-    public void vanillaSetting(VanillaNPC vanillaNpc) {
+    public void vanillaSetting(VanillaEntity vanillaNpc) {
         vanillaNpc.setNameTag(getTag()
                 .replace("{名称}", vanillaNpc.getName())
                 .replace("{血量}", vanillaNpc.getHealth() + "")
                 .replace("{最大血量}", vanillaNpc.getMaxHealth() + ""));
         vanillaNpc.setConfig(this);
         vanillaNpc.speed = (float) getMoveSpeed() * 10;
-        vanillaNpc.setDamage(getDamage());
+//        vanillaNpc.setDamage(getDamage());
         vanillaNpc.setScale((float) getSize());
-        vanillaNpc.routeMax = getSeeLine();
-        vanillaNpc.attackSleepTick = getAttaceSpeed();
+//        vanillaNpc.attackSleepTick = getAttaceSpeed();
+        vanillaNpc.seeSize = getSeeLine();
         vanillaNpc.setTool(item);
         vanillaNpc.setArmor(armor.toArray(new Item[0]));
         //vanillaNpc.heal = getHeal();

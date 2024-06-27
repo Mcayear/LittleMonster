@@ -27,6 +27,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+import static com.smallaswater.littlemonster.LittleMonsterMainClass.hasSquarePet;
+
 /**
  * @author SmallasWater
  * Create on 2021/6/28 8:39
@@ -143,7 +145,7 @@ public class Utils {
                 player.y - halfSize,
                 player.y + halfSize,
                 player.z - halfSize,
-                player.z + halfSize),player,true)){
+                player.z + halfSize), player,true)){
             if(isPlayer && player1 instanceof Player){
                 explodePlayer.add(player1);
                 continue;
@@ -157,8 +159,12 @@ public class Utils {
                     }
                 }else if(player1 instanceof EntityLiving &&!(player1 instanceof EntityHuman) && !player1.isImmobile()){
                     explodePlayer.add(player1);
-                }else if (player1 instanceof BaseSquarePet) {// 添加对 宠物 的目标选取
-                    explodePlayer.add(player1);
+                } else {
+                    if (hasSquarePet) {
+                        if (player1 instanceof BaseSquarePet) {// 添加对 宠物 的目标选取
+                            explodePlayer.add(player1);
+                        }
+                    }
                 }
             }
         }

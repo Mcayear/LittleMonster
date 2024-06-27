@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.BaseEntity;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -37,6 +38,8 @@ public class VanillaEntity extends BaseEntity implements IEntity {
     public final int NETWORK_ID;
 
     public IEntity vanillaNPC;
+
+    public int seeSize = 20;
 
     @Setter
     @Getter
@@ -144,6 +147,21 @@ public class VanillaEntity extends BaseEntity implements IEntity {
         }
     }
 
+    @Override
+    public float getWidth() {
+        return width;
+    }
+
+    @Override
+    public float getLength() {
+        return length;
+    }
+
+    @Override
+    public float getHeight() {
+        return height;
+    }
+
     protected ArrayList<Player> getDamagePlayerList() {
         ArrayList<Player> players = new ArrayList<>();
         Player player;
@@ -227,6 +245,53 @@ public class VanillaEntity extends BaseEntity implements IEntity {
     @Override
     public boolean isVanillaEntity() {
         return true;
+    }
+
+    /**
+     * 检查玩家目标是否满足条件
+     *
+     * @param player 玩家
+     * @return 是否满足继续跟踪的条件
+     */
+    protected boolean isPlayerTarget(Player player) {
+        return player.isOnline() && !player.closed && player.isAlive() &&
+                (player.isSurvival() || player.isAdventure()) &&
+                player.getLevel() == this.getLevel() &&
+                this.distance(player) <= this.seeSize;
+    }
+
+    public boolean targetOption(EntityCreature creature) {
+        return this.targetOption(creature, (this.followTarget != null ? this.distance(this.followTarget) : this.seeSize + 1));
+    }
+
+    /**
+     * 检查是否需要更换目标
+     *
+     * @param creature 目标
+     * @param distance 距离
+     * @return 是否需要更换目标
+     */
+    @Override
+    public boolean targetOption(EntityCreature creature, double distance) {
+        if (creature == null) {
+            return true;
+        }
+
+        //不能攻击自己
+        if (creature == this) {
+            return true;
+        }
+
+        //不能攻击主人
+        if (masterHuman != null && creature == masterHuman) {
+            return true;
+        }
+
+        if (creature instanceof Player) {
+            return !this.isPlayerTarget((Player) creature);
+        } else {
+            return creature.closed || !creature.isAlive() || creature.getLevel() != this.getLevel() || distance > seeSize;
+        }
     }
 
     @Override
