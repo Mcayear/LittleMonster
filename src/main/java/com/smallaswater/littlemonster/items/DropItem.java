@@ -45,7 +45,6 @@ public class DropItem extends BaseItem {
                         String original = s.split(SPLIT_1)[0];
                         Class<?> aClass = Class.forName("cn.ankele.plugin.MagicItem");
                         Map<String, Object> items = (Map<String, Object>) aClass.getMethod("getItemsMap").invoke(null);
-                        Map<String, Object> otherItems = (Map<String, Object>) aClass.getMethod("getOthers").invoke(null);
                         String[] args = original.split(SPLIT_2);
                         if (items.containsKey(args[1])) {
                             Item back = (Item) Class.forName("cn.ankele.plugin.utils.BaseCommand")
@@ -53,12 +52,6 @@ public class DropItem extends BaseItem {
                                     .invoke(null, items.get(args[1]));
                             back.setCount(parseInt(args[0]));
                             return new DropItem(back, round);
-                        } else if (otherItems.containsKey(args[1])) {
-                            String[] otherItemArr = ((String) otherItems.get(args[1])).split(":");
-                            Item item = Item.get(parseInt(otherItemArr[0]), parseInt(otherItemArr[1]));
-                            item.setCount(parseInt(args[0]));
-                            item.setCompoundTag(Utils.hexStringToBytes(otherItemArr[3]));
-                            return new DropItem(item, round);
                         } else {
                             LittleMonsterMainClass.getInstance().getLogger().warning("MagicItem物品不存在：" + original);
                         }

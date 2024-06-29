@@ -186,10 +186,11 @@ public class LittleNpc extends BaseEntityMove implements IEntity {
                     );
                 }
 
-                LittleMonsterEntityDeathDropExpEvent expEvent = new LittleMonsterEntityDeathDropExpEvent(this, this.runDeathDropExp());
+                LittleMonsterEntityDeathDropExpEvent expEvent = new LittleMonsterEntityDeathDropExpEvent(this, this.deathDropExp());
                 Server.getInstance().getPluginManager().callEvent(expEvent);
                 if (!expEvent.isCancelled()) {
                     int dropExp = expEvent.getDropExp();
+
                     int addition = 0;
                     // TODO 事件完成后移除这个兼容
                     if (LittleMonsterMainClass.hasRcRPG) {// 经验加成

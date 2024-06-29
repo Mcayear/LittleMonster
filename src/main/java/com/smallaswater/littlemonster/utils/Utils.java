@@ -27,6 +27,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+import static com.smallaswater.littlemonster.LittleMonsterMainClass.hasSquarePet;
+
 /**
  * @author SmallasWater
  * Create on 2021/6/28 8:39
@@ -137,28 +139,32 @@ public class Utils {
     public static LinkedList<Entity> getAroundPlayers(Entity player, int size,boolean isPlayer, boolean isEntity,boolean isNpc) {
         LinkedList<Entity> explodePlayer = new LinkedList<>();
         final double halfSize = size / 2.0;
-        for(Entity player1: player.level.getNearbyEntities(new Area(
+        for(Entity target : player.level.getNearbyEntities(new Area(
                 player.x - halfSize,
                 player.x + halfSize,
                 player.y - halfSize,
                 player.y + halfSize,
                 player.z - halfSize,
                 player.z + halfSize),player,true)){
-            if(isPlayer && player1 instanceof Player){
-                explodePlayer.add(player1);
+            if(isPlayer && target instanceof Player){
+                explodePlayer.add(target);
                 continue;
             }
             if(isEntity){
-                if(isNpc && player1 instanceof LittleNpc){
+                if(isNpc && target instanceof LittleNpc){
                     if(player instanceof LittleNpc){
-                        if(canAttackNpc((LittleNpc) player,(LittleNpc)player1,false)){
-                            explodePlayer.add(player1);
+                        if(canAttackNpc((LittleNpc) player,(LittleNpc)target,false)){
+                            explodePlayer.add(target);
                         }
                     }
-                }else if(player1 instanceof EntityLiving &&!(player1 instanceof EntityHuman) && !player1.isImmobile()){
-                    explodePlayer.add(player1);
-                }else if (player1 instanceof BaseSquarePet) {// 添加对 宠物 的目标选取
-                    explodePlayer.add(player1);
+                }else if(target instanceof EntityLiving &&!(target instanceof EntityHuman) && !target.isImmobile()){
+                    explodePlayer.add(target);
+                } else {
+                    if (hasSquarePet) {
+                        if (target instanceof BaseSquarePet) {// 添加对 宠物 的目标选取
+                            explodePlayer.add(target);
+                        }
+                    }
                 }
             }
         }
