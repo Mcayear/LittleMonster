@@ -223,11 +223,23 @@ public class LittleNpc extends BaseEntityMove implements IEntity {
 
     //受到攻击
     @Override
-    public void onAttack(EntityDamageEvent sure) {
+    public boolean onAttack(EntityDamageEvent sure) {
         if (isImmobile() && !config.isImmobile() && !LittleMonsterMainClass.hasRcRPG) {
             sure.setCancelled();
         }
         if (sure instanceof EntityDamageByEntityEvent) {
+            // 玩家高于实体指定高度时忽略伤害事件
+            if (((EntityDamageByEntityEvent) sure).getDamager() instanceof Player) {
+                int heightThreshold = LittleMonsterMainClass.getInstance().getConfig().getInt("combat.height_threshold", 0);
+                if (heightThreshold > 0) {
+                    int heightDiff = (int) (((EntityDamageByEntityEvent) sure).getDamager().getY() - sure.getEntity().getY());
+                    if (heightDiff >= heightThreshold) {
+                        sure.setCancelled();
+                        return false;
+                    }
+                }
+            }
+
             if (config.isPassiveAttackEntity()) {
                 if (((EntityDamageByEntityEvent) sure).getDamager() instanceof Player) {
                     Player player = (Player) ((EntityDamageByEntityEvent) sure).getDamager();
@@ -239,12 +251,12 @@ public class LittleNpc extends BaseEntityMove implements IEntity {
                     Entity damager = ((EntityDamageByEntityEvent) sure).getDamager();
                     if (!config.isAttackHostileEntity()) {
                         if (damager instanceof EntityMob) {
-                            return;
+                            return true;
                         }
                     }
                     if (damager instanceof LittleNpc) {
                         if (!Utils.canAttackNpc(this, (LittleNpc) damager, true)) {
-                            return;
+                            return true;
                         }
                     }
                     if (!targetOption(damager, distance(damager)) && damager instanceof EntityCreature) {
@@ -253,7 +265,7 @@ public class LittleNpc extends BaseEntityMove implements IEntity {
                 }
             }
             if (LittleMonsterMainClass.hasRcRPG) {
-                return;// 有 RcRPG 时无需处理攻击事件
+                return true;// 有 RcRPG 时无需处理攻击事件
             }
             if (((EntityDamageByEntityEvent) sure).getDamager() instanceof Player) {
                 Player player = (Player) ((EntityDamageByEntityEvent) sure).getDamager();
@@ -261,6 +273,7 @@ public class LittleNpc extends BaseEntityMove implements IEntity {
             }
         }
         this.level.addParticle(new DestroyBlockParticle(this, new BlockRedstone()));
+        return true;
     }
 
     @Override

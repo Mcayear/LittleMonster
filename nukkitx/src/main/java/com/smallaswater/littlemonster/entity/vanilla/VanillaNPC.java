@@ -363,10 +363,24 @@ public class VanillaNPC extends BaseVanillaNPC implements IEntity {
     }
 
     private final Map<Entity, Float> lastAttackHealth = new HashMap<>();//Entity血量存储
-    public void onAttack(EntityDamageEvent sure) {
+    public boolean onAttack(EntityDamageEvent sure) {
+        // 玩家高于实体指定高度时忽略伤害事件
+        if (sure instanceof EntityDamageByEntityEvent) {
+            if (((EntityDamageByEntityEvent) sure).getDamager() instanceof Player) {
+                int heightThreshold = LittleMonsterMainClass.getInstance().getConfig().getInt("combat.height_threshold", 0);
+                if (heightThreshold > 0) {
+                    int heightDiff = (int) (((EntityDamageByEntityEvent) sure).getDamager().getY() - sure.getEntity().getY());
+                    if (heightDiff >= heightThreshold) {
+                        sure.setCancelled();
+                        return false;
+                    }
+                }
+            }
+        }
+
         //此处开始记录entity初始生命值
         if(!lastAttackHealth.containsKey(sure.getEntity())){
-            lastAttackHealth.put(sure.getEntity(),sure.getEntity().getMaxHealth()/1f);
+            lastAttackHealth.put(sure.getEntity(), sure.getEntity().getMaxHealth() / 1f);
         }
         //如果血量为0则清除该entity的记录
         if(lastAttackHealth.get(sure.getEntity()) == 0){
@@ -394,12 +408,12 @@ public class VanillaNPC extends BaseVanillaNPC implements IEntity {
                     Entity damager = ((EntityDamageByEntityEvent) sure).getDamager();
                     if (!config.isAttackHostileEntity()) {
                         if (damager instanceof EntityMob) {
-                            return;
+                            return true;
                         }
                     }
                     if (damager instanceof LittleNpc) {
                         if (!Utils.canAttackNpc(this, (LittleNpc) damager, true)) {
-                            return;
+                            return true;
                         }
                     }
                     if (!targetOption(damager, distance(damager)) && damager instanceof EntityCreature) {
@@ -408,7 +422,7 @@ public class VanillaNPC extends BaseVanillaNPC implements IEntity {
                 }
             }
             if (LittleMonsterMainClass.hasRcRPG) {
-                return;// 有 RcRPG 时无需处理攻击事件
+                return true;// 有 RcRPG 时无需处理攻击事件
             }
             if (((EntityDamageByEntityEvent) sure).getDamager() instanceof Player) {
                 Player player = (Player) ((EntityDamageByEntityEvent) sure).getDamager();
@@ -417,9 +431,10 @@ public class VanillaNPC extends BaseVanillaNPC implements IEntity {
                 //记录最后血量
                 lastAttackHealth.put(sure.getEntity(),sure.getEntity().getHealth());
             }
-            return;
+            return true;
         }
         this.level.addParticle(new DestroyBlockParticle(this, new BlockRedstone()));
+        return true;
     }
 
     /**
@@ -459,8 +474,7 @@ public class VanillaNPC extends BaseVanillaNPC implements IEntity {
             }
         }
         if (super.attack(source)) {
-            this.onAttack(source);
-            return true;
+            return this.onAttack(source);
         } else {
             return false;
         }

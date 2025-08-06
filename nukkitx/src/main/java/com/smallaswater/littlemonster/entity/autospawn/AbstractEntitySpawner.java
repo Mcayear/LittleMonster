@@ -38,13 +38,14 @@ public abstract class AbstractEntitySpawner implements IEntitySpawner {
 
     @Override
     public void spawn(Collection<Player> onlinePlayers) {
-        if (this.isSpawnAllowedByDifficulty()) {
-            for (Player player : onlinePlayers) {
-                if (this.isWorldSpawnAllowed(player.getLevel())) {
-                    SpawnResult lastSpawnResult = this.spawn(player);
-                    if (lastSpawnResult == SpawnResult.MAX_SPAWN_REACHED) {
-                        break;
-                    }
+        if (!this.isSpawnAllowedByDifficulty()) {
+            return;
+        }
+        for (Player player : onlinePlayers) {
+            if (this.isWorldSpawnAllowed(player.getLevel())) {
+                SpawnResult lastSpawnResult = this.spawn(player);
+                if (lastSpawnResult == SpawnResult.MAX_SPAWN_REACHED) {
+                    break;
                 }
             }
         }

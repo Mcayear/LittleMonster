@@ -297,7 +297,7 @@ public abstract class BaseEntity extends EntityHuman {
 
     public abstract void onUpdata();
 
-    public abstract void onAttack(EntityDamageEvent entity);
+    public abstract boolean onAttack(EntityDamageEvent entity);
 
     @Override
     public boolean attack(EntityDamageEvent source) {
@@ -319,8 +319,7 @@ public abstract class BaseEntity extends EntityHuman {
                 this.target = null;
                 this.stayTime = 0;
                 if (super.attack(source)) {
-                    this.onAttack(source);
-                    return true;
+                    return this.onAttack(source);
                 }
             }
         } else {

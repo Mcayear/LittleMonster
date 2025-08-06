@@ -2,6 +2,10 @@ npcs:
   autospawn-tick: 100
   worlds-spawning: []
 
+combat:
+  # 玩家与怪物之间的高差（大于此值则玩家无法造成攻击，仅允许正整数，设置为0时忽略）
+  height_threshold: 1
+
 # 格式
 # autospawn:
 #   怪物名称:
