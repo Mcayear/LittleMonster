@@ -1,17 +1,17 @@
 package com.smallaswater.littlemonster.entity.vanilla.ai.entity;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.BubbleParticle;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import com.smallaswater.littlemonster.entity.vanilla.ai.route.AdvancedRouteFinder;
 import com.smallaswater.littlemonster.entity.vanilla.ai.route.Node;
 import com.smallaswater.littlemonster.entity.vanilla.ai.route.RouteFinder;
 import com.smallaswater.littlemonster.utils.Utils;
+
+import java.awt.*;
 
 abstract public class MovingVanillaEntity extends EntityCreature {
     protected boolean isKnockback = false;
@@ -38,11 +38,12 @@ abstract public class MovingVanillaEntity extends EntityCreature {
         if (this.closed) {
             return false;
         }
+
         passedTick++;
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
-        if (this.isKnockback) {                   // knockback 이 true 인 경우는 맞은 직후
+        if (this.isKnockback) {// 如果击退，则在击中目标后立即发生
             this.isKnockback = false;
         } else if (this.onGround) {
             this.motionX = this.motionZ = 0;
@@ -96,9 +97,7 @@ abstract public class MovingVanillaEntity extends EntityCreature {
             }
         }
 
-        //this.move(this.motionX, this.motionY, this.motionZ);
-
-        this.checkGround();
+        // 处理重力 (放在 move 之前)
         if (!this.onGround) {
             if (this.isInsideOfWater()) {
                 this.motionY += movementSpeed * 0.05D * ((this.target.y - this.y) / tickDiff);
@@ -109,28 +108,81 @@ abstract public class MovingVanillaEntity extends EntityCreature {
             hasUpdate = true;
         }
 
+        // move 方法会自动处理碰撞箱计算，防止穿过半砖和树叶
+        this.move(this.motionX, this.motionY, this.motionZ);
 
-        if ((this.motionX != 0 || this.motionZ != 0) && this.isCollidedHorizontally) {
+        // 处理自动跳跃 (模仿原版行为)
+        if ((this.motionX != 0 || this.motionZ != 0) && this.isCollidedHorizontally && this.onGround) {
             this.jump();
         }
 
-        this.x += this.motionX;
-        if (Math.abs(this.y + this.motionY - (int) this.y) < this.getGravity() - 0.01) {
-            this.y = (int) this.y;
-        } else {
-            this.y += this.motionY;
-        }
-        this.z += this.motionZ;
-
-        AxisAlignedBB bb = this.getBoundingBox();
-        final double x = this.getX(), y = this.getY(), z = this.getZ();
-        final float dx = this.getWidth() / 2, dz = this.getLength() / 2, dy = this.getHeight();
-        bb.setMaxX(x + dx);
-        bb.setMinX(x - dx);
-        bb.setMaxZ(z + dz);
-        bb.setMinZ(z - dz);
-        bb.setMaxY(y + dy);
-        bb.setMinY(y);
+        // === Debug 绘制逻辑开始 ===
+//        // 1. 基础数据计算
+//        AxisAlignedBB currentBB = this.getBoundingBox();
+//        // 最小角点 (作为 Box 起点)
+//        Vector3f minStartPos = new Vector3f(
+//                (float) currentBB.getMinX(),
+//                (float) currentBB.getMinY(),
+//                (float) currentBB.getMinZ()
+//        );
+//        // Box 尺寸
+//        Vector3f boxSize = new Vector3f(
+//                (float) (currentBB.getMaxX() - currentBB.getMinX()),
+//                (float) (currentBB.getMaxY() - currentBB.getMinY()),
+//                (float) (currentBB.getMaxZ() - currentBB.getMinZ())
+//        );
+//
+//        // 2. 颜色定义
+//        Color boxColor = this.isKnockback ? new Color(0, 0, 0, 255) : new Color(0, 255, 0, 255);
+//        Color arrowColor = new Color(0, 255, 255, 255); // 青色箭头，不透明，易于观察
+//        // 3. 发送数据包
+//        Server.getInstance().getOnlinePlayers().forEach((uuid, player) -> {
+//            if (!player.isOp()) return;
+//            if (player.getLevel() != this.getLevel()) return;
+//            // --- 绘制碰撞箱 (Box) ---
+////            player.addShape(new DebugBox(
+////                    this.getId(),                   // ID: 实体ID
+////                    this.getLevel().getDimension(),
+////                    minStartPos,
+////                    1.0f,
+////                    null,                           // Box 不需要旋转
+////                    0.1f,
+////                    boxColor,
+////                    boxSize
+////            ));
+//            // --- 绘制运动矢量 (Arrow) ---
+//            // Motion 箭头数据计算
+//            float motionScale = 25.0f; // <--- 夸张比例参数，当前为 3倍
+//
+//            // 中心点 (作为Arrow 起点)
+//            Vector3f centerPos = new Vector3f(
+//                    (float) currentBB.getMinX() + boxSize.getX() / 2,
+//                    (float) currentBB.getMinY() + boxSize.getY() / 2,
+//                    (float) currentBB.getMinZ() + boxSize.getZ() / 2
+//            );
+//            // 计算箭头终点：起点 + (Motion * Scale)
+//            if (Math.abs(this.motionX) > 0.001 || Math.abs(this.motionY) > 0.001 || Math.abs(this.motionZ) > 0.001) {
+//                Vector3f arrowEndPos = new Vector3f(
+//                        centerPos.x + (float) this.motionX * motionScale,
+//                        centerPos.y + (float) this.motionY * motionScale,
+//                        centerPos.z + (float) this.motionZ * motionScale
+//                );
+////                player.addShape(new DebugArrow(
+////                        this.getId() + 400000000L,      // ID: 必须与 Box 不同！使用大偏移量避免冲突
+////                        this.getLevel().getDimension(),
+////                        centerPos,                      // 起点
+////                        1.0f,                           // Scale
+////                        null,                           // Rotation: 箭头由起点终点决定，无需手动旋转
+////                        0.1f,                           // Time
+////                        arrowColor,                     // Color
+////                        arrowEndPos,                    // 终点
+////                        0.3f,                           // 箭头头部长度 (视觉调整)
+////                        0.1f,                           // 箭头头部半径
+////                        4                               // 箭头分段数 (4=棱锥体)
+////                ));
+//            }
+//        });
+        // === Debug 绘制逻辑结束 ===
 
         return hasUpdate;
     }
@@ -192,24 +244,8 @@ abstract public class MovingVanillaEntity extends EntityCreature {
         this.isCollidedHorizontally = (movX != dx || movZ != dz);
         this.isCollided = (this.isCollidedHorizontally || this.isCollidedVertically);
 
-        // this.onGround = (movY != dy && movY < 0);
-        // onGround 는 onUpdate 에서 확인
-    }
-
-    private void _checkGround() {
-        AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(0, -1, 0) : this.boundingBox.addCoord(0, -1, 0), false);
-        double maxY = 0;
-        for (AxisAlignedBB bb : list) {
-            if (bb.getMaxY() > maxY) {
-                maxY = bb.getMaxY();
-            }
-        }
-        this.onGround = (maxY == this.boundingBox.getMinY());
-    }
-
-    private void checkGround() {
-        Block block = this.level.getBlock((int) this.x, (int) (this.y - this.getGravity()), (int) this.z - 1);
-        this.onGround = !AdvancedRouteFinder.canPassThroughBlock(block);
+        // 让物理引擎自动判断是否落地
+        this.onGround = (movY != dy && movY < 0);
     }
 
     @Override

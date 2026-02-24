@@ -36,7 +36,7 @@ public class ShootAttackExecutor {
             //this.coolDownTick = vanillaNPC.getAttackSleepTick();
             //this.damage = vanillaNPC.getDamage();
             playBowAnimation(ientity, target);
-            LittleMonsterMainClass.getInstance().getServer().getScheduler().scheduleDelayedTask(()->{
+            LittleMonsterMainClass.getInstance().getServer().getScheduler().scheduleDelayedTask(LittleMonsterMainClass.getInstance(), ()->{
                 inExecute = false;
                 bowShoot(ientity, target);
                 stopBowAnimation(ientity);
@@ -70,7 +70,7 @@ public class ShootAttackExecutor {
         EntityArrow arrow = (EntityArrow) Entity.createEntity("Arrow", entity.chunk, nbt, entity, false);
 
         arrow.age = 900;// 原 1200 tick 现在只剩 300 tick 也就是 15s
-        LittleMonsterMainClass.getInstance().getServer().getScheduler().scheduleDelayedTask(()->{
+        LittleMonsterMainClass.getInstance().getServer().getScheduler().scheduleDelayedTask(LittleMonsterMainClass.getInstance(), ()->{
             if (arrow.onGround) {
                 failedAttackCount++;
             } else if (arrow.hadCollision) {
