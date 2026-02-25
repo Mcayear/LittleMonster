@@ -80,8 +80,6 @@ abstract public class MovingVanillaEntity extends EntityCreature {
                     jammingTick = 0;
                     if (this.route.next() == null) {
                         this.route.arrived();
-                        this.motionX += 0.5;
-                        this.motionZ += 0.5;
                         this.updateMovement();
                     }
                 } else {
